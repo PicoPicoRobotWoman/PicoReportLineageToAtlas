@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pico.habr</groupId>
+    <artifactId>PicoReportLineageToAtlas</artifactId>
+    <packaging>pom</packaging>
+    <version>1.20.0</version>
+
+    <modules>
+        <module>reporting-task-atlas</module>
+        <module>reporting-task-atlas-nar</module>
+    </modules>
+
+
+    <properties>
+        <nifi.version>1.20.0</nifi.version>
+        <influxdb.version>2.9</influxdb.version>
+    </properties>
+
+    <!-- Раздел для управления зависимостями Maven.
+     В этом разделе определяются версии зависимостей, используемых в проекте.
+     Эти зависимости могут быть включены в модули без явного указания их версий.
+-->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Зависимость для использования SLF4J API (Simple Logging Facade for Java) в проекте.
+                 SLF4J предоставляет абстракцию для различных логгеров, таких как Log4j и Logback.
+            -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.12</version>
+            </dependency>
+
+            <!-- Зависимость для использования API Apache NiFi.
+                 Эта зависимость предоставляет доступ к API Apache NiFi, необходимому для разработки NiFi компонентов.
+                 Поскольку зависимость имеет scope 'provided', она требуется только во время компиляции и не будет включена в конечный артефакт.
+            -->
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-api</artifactId>
+                <version>${nifi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Зависимость для использования утилит процессоров Apache NiFi.
+                 Эти утилиты могут использоваться для создания пользовательских процессоров в NiFi.
+            -->
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-processor-utils</artifactId>
+                <version>1.15.3</version>
+            </dependency>
+
+            <!-- Зависимость для использования утилит отчетности Apache NiFi.
+                 Эти утилиты предоставляют инструменты для разработки компонентов отчетности в NiFi.
+            -->
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-reporting-utils</artifactId>
+                <version>${nifi.version}</version>
+            </dependency>
+
+            <!-- Зависимость для использования Apache Commons IO.
+                 Commons IO предоставляет утилиты для ввода-вывода (I/O), такие как операции с файлами и потоками.
+            -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Раздел сборки, где определяются плагины, используемые для процесса сборки проекта -->
+    <build>
+        <plugins>
+            <!-- Плагин NiFi NAR Maven Plugin используется для создания NAR (NiFi Archive) файлов.
+                 NAR файлы — это специальные архивы, используемые в Apache NiFi для упаковки расширений (например, процессоров, контроллеров и других компонентов).
+                 Плагин необходим для построения и упаковки пользовательских компонентов NiFi в формате NAR.
+            -->
+            <plugin>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-nar-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <!-- Плагин используется как расширение Maven, добавляя функциональность для сборки NAR файлов. -->
+                <extensions>true</extensions>
+            </plugin>
+
+            <!-- Плагин Maven Surefire Plugin используется для запуска юнит-тестов в фазе тестирования.
+                 Этот плагин выполняет тесты, написанные с использованием фреймворков, таких как JUnit или TestNG, и генерирует отчет о тестах.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.15</version>
+            </plugin>
+
+            <!-- Плагин Maven Compiler Plugin используется для компиляции исходного кода проекта.
+                 В данном случае он настроен для использования версии Java 17 в качестве исходного и целевого уровня компиляции.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- Версия Java, используемая для компиляции исходного кода -->
+                    <source>11</source>
+                    <!-- Версия Java, на которую нацелен скомпилированный код -->
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
